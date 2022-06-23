@@ -9,11 +9,17 @@
 // or 'scissors'
 // Create function taking 2 parameters - playerSelection and computerSelection
 
-function computerPlay('rock', 'paper', 'scissors')
+const computerChoice = document.getElementById('computer-choice')
+const userChoice = document.getElementById('user-choice')
+const resultDisplay = document.getElementById('result')
+
+
+function computerPlay()
+const choices = ['rock', 'paper', 'scissors'];
 
 
 function playRound(playerSelection, computerSelection) {
-
+    
 
     for (let i = 0; i < 5; i++)
 }
