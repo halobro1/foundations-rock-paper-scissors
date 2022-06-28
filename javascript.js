@@ -1,50 +1,63 @@
-const userChoiceDisplay = document.createElement('h1')
-const computerChoiceDisplay = document.createElement('h1')
-const resultDisplay = document.createElement('h1')
-const gameGrid = document.getElementById('game')
-gameGrid.append(userChoiceDisplay, computerChoiceDisplay, resultDisplay)
-
-const choices = ['rock', 'paper', 'scissors']
-let userChoice
-let computerChoice
-
-const handleClick = (e) => {
-    userChoice = e.target.innerHTML
-    userChoiceDisplay.innerHTML = 'User choice: ' + userChoice
-    generateComputerChoice()
-    getResult()
-}
-
-const generateComputerChoice = () => {
-    const randomChoice = choices[Math.floor(Math.random() * choices.length)]
-    computerChoice = randomChoice
-    computerChoiceDisplay.innerHTML = 'Computer choice: ' + computerChoice
-}
-
-for (let i = 0; i < choices.length; i++) {
-    const button = document.createElement('button')
-    button.id = choices[i]
-    button.innerHTML = choices[i]
-    button.addEventListener('click', handleClick)
-    gameGrid.appendChild(button)
-}
-
-const getResult = () => {
-    switch(userChoice + computerChoice) {
-        case 'scissorspaper':
-        case 'rockscissors':
-        case 'paperrock':
-            resultDisplay.innerHTML = "YOU WIN!"
-            break
-        case 'paperscissors':
-        case 'scissorsrock':
-        case 'rockpaper':
-            resultDisplay.innerHTML = "YOU LOSE!"
-            break 
-        case 'scissorsscissors':
-        case 'rockrock':
-        case 'paperpaper':
-            resultDisplay.innerHTML = "IT'S A DRAW!"
-            break
+const selectionButtons = document.querySelectorAll('[data-selection]')
+const finalColumn = document.querySelector('[data-final-column]')
+const computerScoreSpan = document.querySelector('[data-computer-score]')
+const yourScoreSpan = document.querySelector('[data-your-score]')
+const SELECTIONS = [
+    {
+        name:'rock',
+        emoji:'✊',
+        beats:'scissors'
+    },
+    {
+        name:'paper',
+        emoji:'✋',
+        beats:'rock'
+    },
+    {
+        name:'scissors',
+        emoji:'✌',
+        beats:'paper'
     }
+]
+
+selectionButtons.forEach(selectionButton => {
+    selectionButton.addEventListener('click', e => {
+        const selectionName = selectionButton.dataset.selection
+        const selection = SELECTIONS.find(selection => selection.name === selectionName)
+        makeSelection(selectionName)
+    })
+})
+
+function makeSelection(selection) {
+    const computerSelection = randomSelection()
+    const yourWinner = isWinner(selection, computerSelection)
+    const computerWinner = isWinner(computerSelection, selection)
+
+    addSelectionResult(computerSelection, computerWinner)
+    addSelectionResult(selection, yourWinner)
+
+    if (yourWinner) incrementScore(yourScoreSpan)
+    if (computerWinner) incrementScore(computerScoreSpan)
+}
+
+function incrementScore(scoreSpan){
+    scoreSpan.innerText = parseInt(scoreSpan.innerText) +1
+}
+
+
+function addSelectionResult(selection, winner) {
+    const div = document.createElement('div')
+    div.innerText(selection.emoji)
+    div.classList.add('result-selection')
+    if (winner) div.classList.add('winner')
+    finalColumn.after(div)
+}
+
+function isWinner(selection, opponentSelection) {
+    return selection.beats === opponentSelection.name
+}
+
+function randomSelection() {
+     const randomIndex = Math.floor(Math.random() * SELECTIONS.length)
+     return SELECTIONS[randomIndex]
 }
